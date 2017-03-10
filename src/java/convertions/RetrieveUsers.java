@@ -28,15 +28,6 @@ public class RetrieveUsers extends HttpServlet {
             RestClient client = new RestClient();
 
             if (request.getMethod().equals("POST")) {
-
-                /**
-                 * HTTP error handling
-                 */
-                if (response.getStatus() != 200) {
-                    throw new RuntimeException("Failed : HTTP error code : "
-                            + response.getStatus());
-                }
-
                 /**
                  * Initializing the parameters that have been taken from the
                  * user inside the form

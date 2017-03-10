@@ -45,4 +45,19 @@ public class Functions {
         }
         return null;
     }
+    
+    public String toXML(String result){
+        String toXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+                        "<response><code>200</code>"+
+                        "<result>"+result+ 
+                        "</result>"
+                        +"</response>";
+        return toXML;
+    }
+    
+    public String toJSON(String result){
+        String toJSON = "{\"code\":200,\"convertion\":{\"result:" + result + "}}";
+        
+        return toJSON;
+    }
 }

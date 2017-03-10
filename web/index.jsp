@@ -17,7 +17,6 @@
         </div>
         <div class="container">
             <form class="form-horizontal" name="convertion" action="Convertions" method="POST">
-
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="name">UserID:</label>
                     <div class="col-sm-10">
@@ -27,7 +26,7 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="email">Decimal:</label>
                     <div class="col-sm-10">
-                        <input type="number" min="0" class="form-control" name="decimal" placeholder="positive number" required>
+                        <input type="text" min="0" class="form-control" name="decimal" placeholder="positive number">
                     </div>
                 </div>
                 <div class="form-group">    
@@ -38,6 +37,15 @@
                             <option value="hexa">Hexadecimal</option>
                         </select>
                     </div>
+                </div>
+                <div class="col-sm-offset-2 col-sm-10">        
+
+                    <label class="radio-inline">
+                         <input type="radio" name="radioFormat" value="XML">XML
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="radioFormat" value="JSON">JSON
+                     </label>
                 </div>
                 <div class="form-group">        
                     <div class="col-sm-offset-2 col-sm-10">

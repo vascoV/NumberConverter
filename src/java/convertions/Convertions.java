@@ -2,8 +2,6 @@ package convertions;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,24 +23,15 @@ public class Convertions extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/json;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
 
-            String hexa = null;
-            String binary;
+            String result = null;
             Date date = new Date();
 
             Functions func = new Functions();
             RestClient client = new RestClient();
             Convertionservices service = new Convertionservices();
-
-            /**
-             * HTTP Error handling
-             */
-            if (response.getStatus() != 200) {
-                throw new RuntimeException("Failed : HTTP error code : "
-                        + response.getStatus());
-            }
 
             if (request.getMethod().equals("POST")) {
 
@@ -53,6 +42,7 @@ public class Convertions extends HttpServlet {
                 String decimal = request.getParameter("decimal");
                 String serviceRequest = request.getParameter("services");
                 String userID = request.getParameter("userID");
+                String formatChoose = request.getParameter("radioFormat");
 
                 /**
                  * Pase the UserID and the decimal input into integer. So they
@@ -66,14 +56,21 @@ public class Convertions extends HttpServlet {
                  * the corresponding methods
                  */
                 if ("hexa".equals(serviceRequest)) {
-                    hexa = func.convertToHexa(int_From);
-                    service.setResult(hexa);
-                    out.println("<h1>Decimal To Hexa: " + hexa + "</h1>");
-
+                    result = func.convertToHexa(int_From);
+                    service.setResult(result);
                 } else {
-                    binary = func.convertToBinary(int_From);
-                    service.setResult(binary);
-                    out.println("<h1>Decimal To Binary: " + binary + "</h1>");
+                    result = func.convertToBinary(int_From);
+                    service.setResult(result);
+                }
+
+                /**
+                 * Check if the response in either XML or JSON for the API
+                 */
+                if ("XML".equals(formatChoose)) {
+                    response.setContentType("text/xml;charset=UTF-8");
+                    out.println(func.toXML(result));
+                } else {
+                    out.println(func.toJSON(result));
                 }
 
                 /**
