@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "Convertions", urlPatterns = {"/Convertions"})
-public class Convertions extends HttpServlet {
+public class Conversions extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -26,10 +26,10 @@ public class Convertions extends HttpServlet {
         response.setContentType("text/xml;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
 
-            String result = null;
+            String result;
             Date date = new Date();
 
-            Functions func = new Functions();
+            ConversionsHelper ch = new ConversionsHelper();
             RestClient client = new RestClient();
             Convertionservices service = new Convertionservices();
 
@@ -43,60 +43,60 @@ public class Convertions extends HttpServlet {
                 String serviceRequest = request.getParameter("services");
                 String userID = request.getParameter("userID");
                 String formatChoose = request.getParameter("radioFormat");
-               
-                try{
+
+                /**
+                 * Handling error if the input is letter or empty
+                 */
+                try {
+                    /**
+                     * Parse the UserID and the decimal input into integer. So
+                     * they will always be a number
+                     */
                     int id = Integer.parseInt(userID);
-                    int dec = Integer.parseInt(decimal);
-                    
-                } catch(NumberFormatException ex){
+                    int input = Integer.parseInt(decimal);
+
+                    /**
+                     * Check if the drop down menu is either hexa or binary and
+                     * do the corresponding methods
+                     */
+                    if ("hexa".equals(serviceRequest)) {
+                        result = ch.convertToHexa(input);
+                        service.setResult(result);
+                    } else {
+                        result = ch.convertToBinary(input);
+                        service.setResult(result);
+                    }
+
+                    /**
+                     * Check if the response is in either XML or JSON for the
+                     * API
+                     */
                     if ("JSON".equals(formatChoose)) {
                         response.setContentType("text/json;charset=UTF-8");
-                        out.println(func.ErrorToJSON("Unsupported input Type"));
+                        out.println(ch.toJSON(result));
                     } else {
-                        out.println(func.ErrorToXML("Unsupported input Type"));
+                        out.println(ch.toXML(result));
                     }
-                    return;
-                }
 
-                /**
-                 * Parse the UserID and the decimal input into integer. So they
-                 * will always be a number
-                 */
-                int translateUserID = Integer.parseInt(userID);
-                int int_From = Integer.parseInt(decimal);
-                
-                /**
-                 * Check if the drop down menu is either hexa or binary and do
-                 * the corresponding methods
-                 */
-                if ("hexa".equals(serviceRequest)) {
-                    result = func.convertToHexa(int_From);
-                    service.setResult(result);
-                } else {
-                    result = func.convertToBinary(int_From);
-                    service.setResult(result);
-                }
+                    /**
+                     * Setting up the user details and store it to the database.
+                     */
+                    service.setId((long) 0); //autp incrementing the ID
+                    service.setCustomerid(id);
+                    service.setConvertionservice(serviceRequest);
+                    service.setSubmittednum(input);
+                    service.setDate(date);
+                    service.setTime(ch.getTime());
+                    client.create_XML(service);
 
-                /**
-                 * Check if the response in either XML or JSON for the API
-                 */
-                if ("JSON".equals(formatChoose)) {
-                    response.setContentType("text/json;charset=UTF-8");
-                    out.println(func.toJSON(result));
-                } else {
-                    out.println(func.toXML(result));
+                } catch (NumberFormatException ex) {
+                    if ("JSON".equals(formatChoose)) {
+                        response.setContentType("text/json;charset=UTF-8");
+                        out.println(ch.ErrorToJSON("Unsupported input Type"));
+                    } else {
+                        out.println(ch.ErrorToXML("Unsupported input Type"));
+                    }
                 }
-
-                /**
-                 * Setting up the user details and store it to the database.
-                 */
-                service.setId((long) 0);
-                service.setCustomerid(translateUserID);
-                service.setConvertionservice(serviceRequest);
-                service.setSubmittednum(int_From);
-                service.setDate(date);
-                service.setTime(func.getTime());
-                client.create_XML(service);
             }
         }
     }

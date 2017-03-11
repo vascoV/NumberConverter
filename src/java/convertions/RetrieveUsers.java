@@ -26,7 +26,7 @@ public class RetrieveUsers extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
 
             RestClient client = new RestClient();
-            Functions func = new Functions();
+            ConversionsHelper ch = new ConversionsHelper();
 
             if (request.getMethod().equals("POST")) {
                 /**
@@ -38,7 +38,7 @@ public class RetrieveUsers extends HttpServlet {
 
                 /**
                  * Handling the error if the use inputs a letter instead of
-                 * numeral
+                 * numeral or the field is empty
                  */
                 try {
                     int usetID_INT = Integer.parseInt(userID);
@@ -46,9 +46,9 @@ public class RetrieveUsers extends HttpServlet {
 
                     if ("JSON".equals(formatType)) {
                         response.setContentType("text/json;charset=UTF-8");
-                        out.println(func.ErrorToJSON("Unsupported input Type"));
+                        out.println(ch.ErrorToJSON("Unsupported input Type"));
                     } else {
-                        out.println(func.ErrorToXML("Unsupported input Type"));
+                        out.println(ch.ErrorToXML("Unsupported input Type"));
                     }
                     return;
                 }
