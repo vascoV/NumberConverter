@@ -23,7 +23,7 @@ public class Convertions extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/json;charset=UTF-8");
+        response.setContentType("text/xml;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
 
             String result = null;
@@ -43,14 +43,28 @@ public class Convertions extends HttpServlet {
                 String serviceRequest = request.getParameter("services");
                 String userID = request.getParameter("userID");
                 String formatChoose = request.getParameter("radioFormat");
+               
+                try{
+                    int id = Integer.parseInt(userID);
+                    int dec = Integer.parseInt(decimal);
+                    
+                } catch(NumberFormatException ex){
+                    if ("JSON".equals(formatChoose)) {
+                        response.setContentType("text/json;charset=UTF-8");
+                        out.println(func.ErrorToJSON("Unsupported input Type"));
+                    } else {
+                        out.println(func.ErrorToXML("Unsupported input Type"));
+                    }
+                    return;
+                }
 
                 /**
-                 * Pase the UserID and the decimal input into integer. So they
+                 * Parse the UserID and the decimal input into integer. So they
                  * will always be a number
                  */
-                Integer translateUserID = Integer.parseInt(userID);
-                Integer int_From = Integer.parseInt(decimal);
-
+                int translateUserID = Integer.parseInt(userID);
+                int int_From = Integer.parseInt(decimal);
+                
                 /**
                  * Check if the drop down menu is either hexa or binary and do
                  * the corresponding methods
@@ -66,11 +80,11 @@ public class Convertions extends HttpServlet {
                 /**
                  * Check if the response in either XML or JSON for the API
                  */
-                if ("XML".equals(formatChoose)) {
-                    response.setContentType("text/xml;charset=UTF-8");
-                    out.println(func.toXML(result));
-                } else {
+                if ("JSON".equals(formatChoose)) {
+                    response.setContentType("text/json;charset=UTF-8");
                     out.println(func.toJSON(result));
+                } else {
+                    out.println(func.toXML(result));
                 }
 
                 /**

@@ -60,4 +60,21 @@ public class Functions {
         
         return toJSON;
     }
+    
+     public String ErrorToXML(String error){
+        String toXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+                        "<response><code>500</code>"+
+                        "<result>"+error+ 
+                        "</result>"
+                        +"</response>";
+        return toXML;
+    }
+     
+     public String ErrorToJSON(String error){
+        String toJSON = "{\"code\":500,\"convertion\":{\"result:" + error + "}}";
+        
+        return toJSON;
+    }
+     
+     
 }

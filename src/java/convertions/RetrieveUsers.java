@@ -26,6 +26,7 @@ public class RetrieveUsers extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
 
             RestClient client = new RestClient();
+            Functions func = new Functions();
 
             if (request.getMethod().equals("POST")) {
                 /**
@@ -34,6 +35,23 @@ public class RetrieveUsers extends HttpServlet {
                  */
                 String userID = request.getParameter("report");
                 String formatType = request.getParameter("format");
+
+                /**
+                 * Handling the error if the use inputs a letter instead of
+                 * numeral
+                 */
+                try {
+                    int usetID_INT = Integer.parseInt(userID);
+                } catch (NumberFormatException ex) {
+
+                    if ("JSON".equals(formatType)) {
+                        response.setContentType("text/json;charset=UTF-8");
+                        out.println(func.ErrorToJSON("Unsupported input Type"));
+                    } else {
+                        out.println(func.ErrorToXML("Unsupported input Type"));
+                    }
+                    return;
+                }
 
                 /**
                  * Storing the rest methods FindCustomerByID_XML &&
